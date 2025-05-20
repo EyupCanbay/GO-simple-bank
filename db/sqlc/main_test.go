@@ -19,7 +19,8 @@ var testDB *pgxpool.Pool
 // TestMain initializes the database connection and sets up the queries object for testing
 func TestMain(m *testing.M) {
 	// creating connection database pool
-	testDB, err := pgxpool.New(context.Background(), dbSource)
+	var err error
+	testDB, err = pgxpool.New(context.Background(), dbSource)
 	if err != nil {
 		log.Fatal("Cannot connect to db:", err)
 	}
