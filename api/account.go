@@ -120,3 +120,38 @@ func (server *Server) deleteAccount(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, buffer)
 }
+
+type updateAccountURI struct {
+	ID int64 `uri:"account_id" binding:"required,min=1"`
+}
+
+type updateAccountJSON struct {
+	Balance int64 `json:"balance" binding:"required,min=1"`
+}
+
+func (server *Server) updateAccount(ctx *gin.Context) {
+	var uri updateAccountURI
+	if err := ctx.ShouldBindUri(&uri); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	var req updateAccountJSON
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.UpdateAccountParams{
+		ID:      uri.ID,
+		Balance: req.Balance,
+	}
+
+	account, err := server.store.UpdateAccount(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, account)
+}
