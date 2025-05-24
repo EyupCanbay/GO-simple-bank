@@ -5,6 +5,7 @@ import (
 	"log"
 	"simple_bank/api"
 	db "simple_bank/db/sqlc"
+	"simple_bank/utils"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -15,7 +16,12 @@ const (
 )
 
 func main() {
-	conn, err := pgxpool.New(context.Background(), dbSource)
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		log.Fatal("can not load configiration")
+	}
+
+	conn, err := pgxpool.New(context.Background(), config.SBSoruce)
 	if err != nil {
 		log.Fatal("Cannot connect to db:", err)
 	}
@@ -23,7 +29,7 @@ func main() {
 	store := db.NewStore(conn)
 	server := api.NewServer(store)
 
-	err = server.Start(serverAddress)
+	err = server.Start(config.ServerAddress)
 	if err != nil {
 		log.Fatal("can not start:", err)
 	}
