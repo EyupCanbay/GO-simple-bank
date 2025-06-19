@@ -19,7 +19,7 @@ type Account struct {
 type Entry struct {
 	ID        int64       `json:"id"`
 	AccountID pgtype.Int8 `json:"account_id"`
-	// can be negative or positive
+	// negatif veya pozitif olabilir
 	Amount    int64              `json:"amount"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
@@ -28,7 +28,16 @@ type Transfer struct {
 	ID            int64       `json:"id"`
 	FromAccountID pgtype.Int8 `json:"from_account_id"`
 	ToAccountID   pgtype.Int8 `json:"to_account_id"`
-	// must be positive
+	// pozitif olmalı
 	Amount    int64              `json:"amount"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
+}
+
+type User struct {
+	Username          string             `json:"username"`
+	HashedPassword    string             `json:"hashed_password"`
+	FullName          string             `json:"full_name"`
+	Email             string             `json:"email"`
+	PasswordChangedAt pgtype.Timestamptz `json:"password_changed_at"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
 }

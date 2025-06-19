@@ -6,6 +6,7 @@ import (
 	db "simple_bank/db/sqlc"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 // create account
@@ -29,6 +30,13 @@ func (server *Server) createAcount(ctx *gin.Context) {
 
 	account, err := server.store.CreateAccount(ctx, arg)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "accounts_owner_fkey":
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
