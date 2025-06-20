@@ -19,10 +19,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func randomAccount() db.Account {
+func randomAccount(owner string) db.Account {
 	return db.Account{
 		ID:       utils.RandomInt(1, 1000),
-		Owner:    utils.RandomOwner(),
+		Owner:    owner,
 		Balance:  utils.RandomMoney(),
 		Currency: utils.RandomCurrency(),
 	}
@@ -50,7 +50,8 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 }
 
 func TestGetByIdAccount(t *testing.T) {
-	account := randomAccount()
+	user,_ := randomUser(t)
+	account := randomAccount(user.Username)
 
 	testCase := []struct {
 		name          string
